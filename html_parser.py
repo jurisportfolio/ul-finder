@@ -5,15 +5,12 @@ import data_containers
 
 
 class UlExtractor(HTMLParser):
-    def __init__(self):
+    def __init__(self, storage):
         super().__init__()
         self.stack = data_containers.Stack()
-        self.storage = data_containers.Storage()
-        self.ID_COUNTER = 0
+        self.storage = storage
 
     def handle_starttag(self, tag, attrs):
-        self.ID_COUNTER += 1
-        print(f'{self.ID_COUNTER} {tag} {attrs}')
         if tag == 'ul':
             self.stack.push({"count": 0})
         elif tag == 'li':
@@ -33,13 +30,11 @@ class UlExtractor(HTMLParser):
         elif tag == "li":
             last_ul_ref = self.stack.last()
             last_ul_ref["last_li"].append({"end": tag})
-            print(f'stack: {self.stack}')
         else:
             last_ul_ref = self.stack.last()
             if last_ul_ref:
                 if "last_li" in last_ul_ref:
                     last_ul_ref["last_li"].append({"end": tag})
-                    print(f'stack: {self.stack}')
 
     def handle_data(self, data):
         if not data.startswith("\n"):
@@ -50,8 +45,8 @@ class UlExtractor(HTMLParser):
 
 
 def html_string(url: str) -> str:
-    bite_html = request.urlopen(url).read()
-    return bite_html.decode("utf8")
+    html_bytes = request.urlopen(url).read()
+    return html_bytes.decode("utf8")
 
 
 def restored_li(raw_li: dict) -> str:
