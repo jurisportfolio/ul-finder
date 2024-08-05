@@ -2,14 +2,12 @@ import operator
 from html.parser import HTMLParser
 
 
-
 class UlExtractor(HTMLParser):
     def __init__(self):
         super().__init__()
         self.stack = []
         self.storage = []
         self.ID_COUNTER = 0
-
 
     def handle_starttag(self, tag, attrs):
         self.ID_COUNTER += 1

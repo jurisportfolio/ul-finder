@@ -26,10 +26,9 @@ def restored_li(raw_li: dict) -> str:
     return li
 
 
-
-url = cli_args_parser.source_url()
+html_url = cli_args_parser.source_url()
 # print(type(url))
-html = html_string(url)
+html = html_string(html_url)
 # print(html)
 
 extractor = html_parser.UlExtractor()
@@ -41,6 +40,3 @@ greatest_ul = extractor.greatest_ul()
 print(greatest_ul)
 
 print(restored_li(greatest_ul["last_li"]))
-
-
-
