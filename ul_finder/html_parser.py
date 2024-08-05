@@ -1,7 +1,6 @@
-import operator
 from html.parser import HTMLParser
 from urllib import request
-import data_containers
+from ul_finder import data_containers
 
 
 class UlExtractor(HTMLParser):
