@@ -1,3 +1,4 @@
+import operator
 from html.parser import HTMLParser
 
 
@@ -18,7 +19,7 @@ class UlExtractor(HTMLParser):
         elif tag == 'li':
             last_ul_ref = self.last_on_stack()
             last_ul_ref["count"] += 1
-            last_ul_ref["last_li"] = []
+            last_ul_ref["last_li"] = [{"start": tag, "attrs": attrs}]
         else:
             last_ul_ref = self.last_on_stack()
             if last_ul_ref:
@@ -30,7 +31,11 @@ class UlExtractor(HTMLParser):
         if tag == "ul":
             last_ul_ref = self.del_from_stack()
             self.add_to_storage(last_ul_ref)
-        elif tag != "li":
+        elif tag == "li":
+            last_ul_ref = self.last_on_stack()
+            last_ul_ref["last_li"].append({"end": tag})
+            print(f'stack: {self.stack}')
+        else:
             last_ul_ref = self.last_on_stack()
             if last_ul_ref:
                 if "last_li" in last_ul_ref:
@@ -60,3 +65,7 @@ class UlExtractor(HTMLParser):
     def add_to_storage(self, last_ul_ref):
         self.storage.append(last_ul_ref)
         print(f'storage: {self.storage}')
+
+    def greatest_ul(self):
+        all_uls = sorted(self.storage, key=operator.itemgetter('count'))
+        return all_uls[-1]
