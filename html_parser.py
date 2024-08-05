@@ -24,8 +24,7 @@ class UlExtractor(HTMLParser):
             last_ul_ref = self.last_on_stack()
             if last_ul_ref:
                 if "last_li" in last_ul_ref:
-                    last_ul_ref["last_li"].append({"start": tag})
-                    last_ul_ref["last_li"].append({"attrs": attrs})
+                    last_ul_ref["last_li"].append({"start": tag, "attrs": attrs})
 
     def handle_endtag(self, tag):
         if tag == "ul":
