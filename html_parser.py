@@ -1,5 +1,6 @@
 import operator
 from html.parser import HTMLParser
+from urllib import request
 
 
 class UlExtractor(HTMLParser):
@@ -66,3 +67,8 @@ class UlExtractor(HTMLParser):
     def greatest_ul(self):
         all_uls = sorted(self.storage, key=operator.itemgetter('count'))
         return all_uls[-1]
+
+
+def html_string(url: str) -> str:
+    bite_html = request.urlopen(url).read()
+    return bite_html.decode("utf8")
