@@ -36,11 +36,17 @@ class UlExtractor(HTMLParser):
                     last_ul_ref["last_li"].append({"end": tag})
 
     def handle_data(self, data):
-        if not data.startswith("\n"):
-            last_ul_ref = self.stack.last()
-            if last_ul_ref:
-                if "last_li" in last_ul_ref:
-                    last_ul_ref["last_li"].append({"data": data})
+        # if not data.startswith("\n"):
+        last_ul_ref = self.stack.last()
+        if last_ul_ref:
+            if "last_li" in last_ul_ref:
+                last_ul_ref["last_li"].append({"data": data})
+
+    def handle_startendtag(self, tag, attrs):
+        last_ul_ref = self.stack.last()
+        if last_ul_ref:
+            if "last_li" in last_ul_ref:
+                last_ul_ref["last_li"].append({"self": tag, "attrs": attrs})
 
 
 def html_string(url: str) -> str:
@@ -57,6 +63,12 @@ def restored_li(raw_li: dict) -> str:
                 for attr in item['attrs']:
                     li += f" {attr[0]}=\"{attr[1]}\""
             li += ">"
+        if 'self' in item:
+            li += f"<{item['self']}"
+            if 'attrs' in item:
+                for attr in item['attrs']:
+                    li += f" {attr[0]}=\"{attr[1]}\""
+            li += " />"
         if 'data' in item:
             li += f"{item['data']}"
         if 'end' in item:
