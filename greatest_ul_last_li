@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
-from ul_finder import data_containers, cli, html_parser
+from ul_finder import data_containers, cli, html_parser, fetch_resource
 
 
-# def fetch(url):
-#     return html_parser.html_string(url)
-#
-#
 # def parse(html):
 #     storage = data_containers.Storage()
 #     extractor = html_parser.UlExtractor(storage)
@@ -20,6 +16,8 @@ from ul_finder import data_containers, cli, html_parser
 
 
 url = cli.source_url()
-# html = fetch(url)
+html = fetch_resource.html(url)
 # storage = parse(html)
 # report(storage)
+
+print(html)
