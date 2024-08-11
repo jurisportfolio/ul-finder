@@ -1,10 +1,16 @@
 from ul_finder_src import cli, html_parser, fetch_resource
 
 
-def greatest_ul(html):
+def greatest_ul(html) -> dict:
     extractor = html_parser.UlExtractor()
     extractor.feed(html)
-    return extractor.greatest_ul()
+    uls = extractor.all_uls()
+    if uls:
+        greatest_ul = uls[0]
+        for ul in uls:
+            if ul["has_li"] > greatest_ul["has_li"]:
+                greatest_ul = ul
+        return greatest_ul
 
 
 # def report(storage):
@@ -16,6 +22,6 @@ def greatest_ul(html):
 def main():
     url = cli.source_url()
     html = fetch_resource.html(url)
-    ul = greatest_ul(html)
+    ul_position = greatest_ul(html)
 
     print(ul)
