@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-from ul_finder import data_containers, cli, html_parser, fetch_resource
+from ul_finder import cli, html_parser, fetch_resource
 
 
-# def parse(html):
-#     storage = data_containers.Storage()
-#     extractor = html_parser.UlExtractor(storage)
-#     extractor.feed(html)
-#     return storage
+def greatest_ul(html):
+    extractor = html_parser.UlExtractor()
+    extractor.feed(html)
+    print(extractor.__all_uls__())
+    return extractor.greatest_ul()
 
 
 # def report(storage):
@@ -17,7 +17,6 @@ from ul_finder import data_containers, cli, html_parser, fetch_resource
 
 url = cli.source_url()
 html = fetch_resource.html(url)
-# storage = parse(html)
-# report(storage)
+ul = greatest_ul(html)
 
-print(html)
+print(ul)
