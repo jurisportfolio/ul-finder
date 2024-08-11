@@ -2,7 +2,7 @@ import unittest
 from ul_finder_src.html_parser import UlExtractor
 
 
-class UlCounterTest(unittest.TestCase):
+class UlExtractorTest(unittest.TestCase):
     def test_handle_starttag(self):
         extractor = UlExtractor()
         extractor.handle_starttag("ul", None)
