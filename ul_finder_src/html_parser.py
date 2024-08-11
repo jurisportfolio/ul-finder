@@ -19,30 +19,31 @@ class UlExtractor(HTMLParser):
     def reset_li_counter(self):
         self.li_counter = 0
 
+    def restore_li_counter(self):
+        if self.stack.is_empty():
+            self.li_counter = 0
+        else:
+            self.li_counter = self.stack.last()["has_li"]
+
     def handle_starttag(self, tag, _attrs):
         if tag == "ul":
             self.upraise_ul_counter()
             self.reset_li_counter()
-            self.stack.push({"ul": self.ul_counter, "has_li": 0})
+            self.stack.push({"ul": self.ul_counter, "has_li": self.li_counter})
+
         elif tag == "li":
             self.upraise_li_counter()
-            last_ul = self.stack.last()
-            last_ul["has_li"] = self.li_counter
+            current_ul = self.stack.last()
+            current_ul["has_li"] = self.li_counter
 
     def handle_endtag(self, tag):
         if tag == "ul":
-            last_ul = self.stack.pop()
-            self.storage.append(last_ul)
+            current_ul = self.stack.pop()
+            self.storage.append(current_ul)
+            self.restore_li_counter()
 
-    def __all_uls__(self):
+    def all_uls(self):
         return self.storage
-
-    def greatest_ul(self) -> dict:
-        greatest_ul = self.storage[0]
-        for ul in self.storage:
-            if ul["has_li"] > greatest_ul["has_li"]:
-                greatest_ul = ul
-        return greatest_ul
 
 
 # class LiExtractor(HTMLParser):

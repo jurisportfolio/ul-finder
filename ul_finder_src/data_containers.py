@@ -14,3 +14,9 @@ class Stack:
 
     def pop(self):
         return self.stack.pop(-1)
+
+    def is_empty(self):
+        if self.stack:
+            return False
+        else:
+            return True
