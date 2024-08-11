@@ -1,22 +1,6 @@
 #!/usr/bin/env python3
-from ul_finder import cli, html_parser, fetch_resource
 
+import ul_finder_src
 
-def greatest_ul(html):
-    extractor = html_parser.UlExtractor()
-    extractor.feed(html)
-    print(extractor.__all_uls__())
-    return extractor.greatest_ul()
-
-
-# def report(storage):
-#     greatest_ul = storage.greatest_ul()
-#     last_li = html_parser.restored_li(greatest_ul["last_li"])
-#     print(last_li)
-
-
-url = cli.source_url()
-html = fetch_resource.html(url)
-ul = greatest_ul(html)
-
-print(ul)
+if __name__ == "__main__":
+    ul_finder_src.main()

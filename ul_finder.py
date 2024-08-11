@@ -1,4 +1,4 @@
-from ul_finder import cli, html_parser, fetch_resource
+from ul_finder_src import cli, html_parser, fetch_resource
 
 
 def greatest_ul(html):

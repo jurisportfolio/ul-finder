@@ -1,5 +1,5 @@
 from html.parser import HTMLParser
-from ul_finder import data_containers
+from ul_finder_src import data_containers
 
 
 class UlExtractor(HTMLParser):
@@ -19,20 +19,20 @@ class UlExtractor(HTMLParser):
     def reset_li_counter(self):
         self.li_counter = 0
 
-    def handle_starttag(self, tag, attrs):
-        if tag == 'ul':
+    def handle_starttag(self, tag, _attrs):
+        if tag == "ul":
             self.upraise_ul_counter()
             self.reset_li_counter()
-            self.stack.push({"ul": self.ul_counter, "li": self.li_counter})
-        elif tag == 'li':
+            self.stack.push({"ul": self.ul_counter, "has_li": 0})
+        elif tag == "li":
             self.upraise_li_counter()
-            last_ul_ref = self.stack.last()
-            last_ul_ref["li"] = self.li_counter
+            last_ul = self.stack.last()
+            last_ul["has_li"] = self.li_counter
 
     def handle_endtag(self, tag):
         if tag == "ul":
-            last_ul_ref = self.stack.pop()
-            self.storage.append(last_ul_ref)
+            last_ul = self.stack.pop()
+            self.storage.append(last_ul)
 
     def __all_uls__(self):
         return self.storage
@@ -40,7 +40,7 @@ class UlExtractor(HTMLParser):
     def greatest_ul(self) -> dict:
         greatest_ul = self.storage[0]
         for ul in self.storage:
-            if ul["li"] > greatest_ul["li"]:
+            if ul["has_li"] > greatest_ul["has_li"]:
                 greatest_ul = ul
         return greatest_ul
 
