@@ -5,7 +5,8 @@ import unittest
 class GreatestUlTest(unittest.TestCase):
 
     def test_greatest_ul_1(self):
-        self.assertEqual(ul_finder.greatest_ul(html_test_1), None)
+        with self.assertRaises(ValueError):
+            ul_finder.greatest_ul(html_test_1)
 
     def test_greatest_ul_2(self):
         self.assertEqual(ul_finder.greatest_ul(html_test_2), {'ul': 1, 'has_li': 0})

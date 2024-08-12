@@ -1,4 +1,5 @@
 from urllib import request, error
+import sys
 
 
 def html(url: str) -> str:
@@ -11,6 +12,8 @@ def html(url: str) -> str:
 
     except error.HTTPError as e:
         print(f"HTTP Error: {e.code} {e.reason}")
+        sys.exit()
 
     except error.URLError as e:
         print(f"URL Error: {e.reason}")
+        sys.exit()

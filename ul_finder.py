@@ -11,6 +11,8 @@ def greatest_ul(html: str) -> dict:
             if ul["has_li"] > greatest_ul["has_li"]:
                 greatest_ul = ul
         return greatest_ul
+    else:
+        raise ValueError("No <ul> in HTML file")
 
 
 def last_li(html: str, position: dict) -> str:
@@ -23,9 +25,9 @@ def last_li(html: str, position: dict) -> str:
 def main():
     url: str = cli.source_url()
     html: str = fetch_resource.html(url)
-    ul_position: dict = greatest_ul(html)
-    if ul_position is None:
-        print("No <ul> in HTML file")
-    else:
+    try:
+        ul_position: dict = greatest_ul(html)
         li: str = last_li(html, ul_position)
         print(li)
+    except ValueError as e:
+        print(e)
