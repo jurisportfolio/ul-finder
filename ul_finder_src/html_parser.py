@@ -46,55 +46,84 @@ class UlExtractor(HTMLParser):
         return self.storage
 
 
-# class LiExtractor(HTMLParser):
-#
-#     def __init__(self):
-#         super().__init__()
-#         self.ul_counter = 0
-#         self.li_counter = 0
-#
-#     def upraise_ul_counter(self):
-#         self.ul_counter += 1
-#
-#     def upraise_li_counter(self):
-#         self.li_counter += 1
-#
-#     def handle_starttag(self, tag, attrs):
-#
-#     def handle_data(self, data):
-#         # if not data.startswith("\n"):
-#         last_ul_ref = self.stack.last()
-#         if last_ul_ref:
-#             if "last_li" in last_ul_ref:
-#                 last_ul_ref["last_li"].append({"data": data})
-#
-#     def handle_startendtag(self, tag, attrs):
-#         last_ul_ref = self.stack.last()
-#         if last_ul_ref:
-#             if "last_li" in last_ul_ref:
-#                 last_ul_ref["last_li"].append({"self": tag, "attrs": attrs})
-#
-#
+class LiExtractor(HTMLParser):
 
-#
-#
-# def restored_li(raw_li: dict) -> str:
-#     li = ""
-#     for item in raw_li:
-#         if 'start' in item:
-#             li += f"<{item['start']}"
-#             if 'attrs' in item:
-#                 for attr in item['attrs']:
-#                     li += f" {attr[0]}=\"{attr[1]}\""
-#             li += ">"
-#         if 'self' in item:
-#             li += f"<{item['self']}"
-#             if 'attrs' in item:
-#                 for attr in item['attrs']:
-#                     li += f" {attr[0]}=\"{attr[1]}\""
-#             li += " />"
-#         if 'data' in item:
-#             li += f"{item['data']}"
-#         if 'end' in item:
-#             li += f"</{item['end']}>"
-#     return li
+    def __init__(self):
+        super().__init__()
+        self.__position = {}
+        self.__ul_counter = 0
+        self.__li_counter = 0
+        self.__last_li_is_open = False
+        self.last_li = ""
+        self.inner_lis = 0
+
+    def provide_ul(self, position: dict):
+        self.__position = position
+
+    def handle_starttag(self, tag, attrs):
+        if self.__last_li_founded():
+            if self.__last_li_is_open:
+                self.__add_to_last_li(tag, attrs, None, "starttag")
+            if tag == "li" and self.__last_li_is_open:
+                self.inner_lis += 1
+        else:
+            if tag == "ul":
+                self.__upraise_ul_counter()
+            if tag == "li" and self.__ul_founded():
+                self.__upraise_li_counter()
+                if self.__last_li_founded():
+                    self.inner_lis += 1
+                    self.__last_li_is_open = True
+                    self.last_li += "<li>"
+
+    def handle_endtag(self, tag):
+        if self.__last_li_founded():
+            if self.__last_li_is_open:
+                self.__add_to_last_li(tag, None, None, "endtag")
+            if tag == "li" and self.__last_li_is_open:
+                self.inner_lis -= 1
+                if self.inner_lis == 0:
+                    self.__last_li_is_open = False
+
+    def handle_data(self, data):
+        if self.__last_li_founded():
+            if self.__last_li_is_open:
+                self.__add_to_last_li(None, None, data, "data")
+
+    def handle_startendtag(self, tag, attrs):
+        if self.__last_li_founded():
+            if self.__last_li_is_open:
+                self.__add_to_last_li(tag, attrs, None, "startendtag")
+
+    def __upraise_ul_counter(self):
+        self.__ul_counter += 1
+
+    def __upraise_li_counter(self):
+        self.__li_counter += 1
+
+    def __ul_founded(self):
+        return True if self.__ul_counter == self.__position["ul"] else False
+
+    def __last_li_founded(self):
+        if self.__ul_founded() and self.__li_counter == self.__position["has_li"]:
+            return True
+        else:
+            return False
+
+    def __add_to_last_li(self, tag, attrs, data, kind):
+        if kind == "starttag":
+            self.last_li += f"<{tag}"
+            if attrs:
+                for attr in attrs:
+                    self.last_li += f" {attr[0]}=\"{attr[1]}\""
+            self.last_li += ">"
+        if kind == "endtag":
+            self.last_li += f"</{tag}>"
+        if kind == "data":
+            self.last_li += f"{data}"
+        if kind == "startendtag":
+            self.last_li += f"<{tag}"
+            if attrs:
+                for attr in attrs:
+                    self.last_li += f" {attr[0]}=\"{attr[1]}\""
+            self.last_li += "/>"
