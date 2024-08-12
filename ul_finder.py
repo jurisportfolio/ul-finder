@@ -1,7 +1,7 @@
 from ul_finder_src import cli, html_parser, fetch_resource
 
 
-def greatest_ul(html) -> dict:
+def greatest_ul(html: str) -> dict:
     extractor = html_parser.UlExtractor()
     extractor.feed(html)
     uls = extractor.all_uls()
@@ -13,15 +13,19 @@ def greatest_ul(html) -> dict:
         return greatest_ul
 
 
-# def report(storage):
-#     greatest_ul = storage.greatest_ul()
-#     last_li = html_parser.restored_li(greatest_ul["last_li"])
-#     print(last_li)
+def last_li(html: str, position: dict) -> str:
+    extractor = html_parser.LiExtractor()
+    extractor.provide_ul(position)
+    extractor.feed(html)
+    return extractor.last_li
 
 
 def main():
-    url = cli.source_url()
-    html = fetch_resource.html(url)
-    ul_position = greatest_ul(html)
-
-    print(ul)
+    url: str = cli.source_url()
+    html: str = fetch_resource.html(url)
+    ul_position: dict = greatest_ul(html)
+    if ul_position is None:
+        print("No <ul> in HTML file")
+    else:
+        li: str = last_li(html, ul_position)
+        print(li)
