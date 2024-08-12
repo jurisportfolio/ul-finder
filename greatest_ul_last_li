@@ -1,25 +1,6 @@
 #!/usr/bin/env python3
-from ul_finder import data_containers, cli_args_parser, html_parser
 
+import ul_finder
 
-def fetch(url):
-    return html_parser.html_string(url)
-
-
-def parse(html):
-    storage = data_containers.Storage()
-    extractor = html_parser.UlExtractor(storage)
-    extractor.feed(html)
-    return storage
-
-
-def report(storage):
-    greatest_ul = storage.greatest_ul()
-    last_li = html_parser.restored_li(greatest_ul["last_li"])
-    print(last_li)
-
-
-url = cli_args_parser.source_url()
-html = fetch(url)
-storage = parse(html)
-report(storage)
+if __name__ == "__main__":
+    ul_finder.main()
