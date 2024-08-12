@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import ul_finder_src
+import ul_finder
 
 if __name__ == "__main__":
-    ul_finder_src.main()
+    ul_finder.main()
